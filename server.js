@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require("mongoose");
 const app = express();
+const flash = require('connect-flash');
 const passport = require('passport');
 const userController = require('./controllers/user_controller');
 const blogController = require('./controllers/blog_controller');
@@ -34,6 +35,7 @@ app.listen(9000, () => {
     console.log("Listening port 9000");
 });
 
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 

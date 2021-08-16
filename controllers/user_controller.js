@@ -9,16 +9,42 @@ const connectEnsureLogin = require('connect-ensure-login');
 var LocalStrategy = require('passport-local').Strategy;
 var Joi = require('joi');
 
-passport.serializeUser(function(user, done) {
+// passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+//     User.findOne({ email: email }).then((user) => {
+//         if (!user) {
+//             return done(null, false, 'User Not Found');
+//         }
+//         bcrypt.compare(password, user.password, (err, isMatch) => {
+//             if (err) throw err;
+//             if (isMatch) {
+//                 return done(null, user);
+//             } else {
+//                 return done(null, false, { message: 'Password Incorrect' })
+//             }
+//         });
+
+//     })
+// }));
+// passport.serializeUser(function (user, done) {
+//     done(null, user.id);
+// });
+// passport.deserializeUser(function (id, done) {
+//     User.findById(id, function (err, user) {
+//         done(err, user);
+//     });
+// });
+
+
+passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
-passport.deserializeUser((id, done)=>{
+passport.deserializeUser((id, done) => {
     passport.deserializeUser((id, done) => {
-      User.findById(id).then((user) => {
-        done(null, user);
-      }).catch(done);
+        User.findById(id).then((user) => {
+            done(null, user);
+        }).catch(done);
     });
-  });
+});
 
 //TODO STATUSCODELAR DÜZGÜN DÖNMÜYOR ONLAR DÜZELTİLECEK VE GİRİŞ SERVİSİ DÜZELTİLECEK
 
@@ -30,19 +56,24 @@ passport.use("local", new LocalStrategy({ // or whatever you want to use
     passwordField: 'password',
     passReqToCallback: true
 }, function (req, email, password, done) {
-    User.findOne({ 'local.email': email }, function (err, user) {
-        if (err)
+    //emaili ya da usernamei zaten var mı diye kontrol et 
+    User.findOne({ $or: [{ email: email }, { userName: req.body.userName }] }, function (err, user) {
+        if (err) {
             return done(err);
+        }
 
         // check to see if theres already a user with that email
-        if (!user) {
-            return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+        if (user != null) {
+            console.log("BÖYLE BİR USER ZATEN VAR...",);
+            return done(null, false, { failureFlash: 'Username or email is already taken.' });
         } else {
             const body = req.body;
             const schema = joiUserSchema();
             const validation = schema.validate(body);
             if (validation.error) {
-                return done(null, false, req.flash('signupMessage', 'BAD REQUEST 404'));
+                console.log("VALIDATION ERROR : ", validation.error);
+                res.send()
+                return done(null, false, { message: 'VALIDATION ERROR.' });
                 // return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
                 //     status: 'error',
                 //     message: 'Invalid request data',
@@ -50,15 +81,16 @@ passport.use("local", new LocalStrategy({ // or whatever you want to use
                 // });
             }
             else {
+                console.log("BODY : ", body.userName); // body.userName geliyor başarılı bir şekilde
+                //bodyde bulunan tüm key value değerleri newUsera aktarılıyor userName hariç...
                 const newUser = new User(body);
-                newUser.local.email    = email;
-                newUser.local.password = newUser.generateHash(password);
+                newUser.password = newUser.generateHash(password);
+                // newUser.userName = body.userName;
                 newUser.save().then((val) => {
-                    console.log("NEWUSER DÖNDÜ")
                     return done(null, newUser);
                     // res.status(httpStatusCode.StatusCodes.OK).send(val.id);
                 }).catch((err) => {
-                    return done("BAD REQUEST")
+                    return done(null, false, { message: `BAD REQUEST. :  ${err}` });
                     // res.status(httpStatusCode.StatusCodes.BAD_REQUEST).send(err);
                 })
             }
@@ -99,18 +131,40 @@ passport.use("local", new LocalStrategy({ // or whatever you want to use
 router.post('/signup', passport.authorize('local')
     , (req, res) => {
         console.log("PASSPORT AUTHORİZE BİTTİ AMA BURDA İŞ KALMADI?")
-        console.log("RESPONSE : " ,res )
+        // res.send
+        console.log("res data : ", res.statusCode)
     }
 );
-
-// router.get('/login',
-//     (req, res) => {
-//         console.log(res.body);    }
-// );
-
 router.get('/login',
-    connectEnsureLogin.ensureLoggedIn(),
-    (req, res) => res.send({ user: req.user })
+    (req, res) => {
+        //find the user based on email
+        const { email, password } = req.body;
+
+        try {
+            const user = awaitUser.findOne({ email });
+            if (user == null)
+                return res.status(400).json({
+                    err: "User with  email doesnot exists.Please signup"
+                })
+        }
+        catch (error) {
+            return res.status(500).json({
+                err:
+                    error.message
+            });
+        }
+
+
+        // const token = jwt.sign({ _id: user._id }, YOUR_SECRET_KEY);
+
+        // res.cookie('t');
+
+        const { _id, name, email } = user;
+        return res.json({ token, user: { _id, email, name } });
+
+
+
+    }
 );
 
 // router.get('/',

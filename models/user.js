@@ -13,9 +13,18 @@ var userSchema = new mongoose.Schema({
         unique: true,
         index: true,
     },
-    local: {
-        email: String,
-        password: String,
+
+    email: {
+        type:String,
+        require:true,
+        index:true,
+        unique: true,
+    },
+    password: {
+        type:String,
+        require:true,
+        index:true,
+        unique: true,
     },
 });
 userSchema.plugin(passportLocalMongoose);
@@ -23,7 +32,7 @@ userSchema.methods.generateHash = function (password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 userSchema.methods.validPassword = function (password) {
-    return bcrypt.compareSync(password, this.local.password);
+    return bcrypt.compareSync(password, this.password);
 };
 
 
