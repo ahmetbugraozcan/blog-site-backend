@@ -9,8 +9,16 @@ const connectEnsureLogin = require('connect-ensure-login');
 var LocalStrategy = require('passport-local').Strategy;
 var Joi = require('joi');
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+passport.deserializeUser((id, done)=>{
+    passport.deserializeUser((id, done) => {
+      User.findById(id).then((user) => {
+        done(null, user);
+      }).catch(done);
+    });
+  });
 
 //TODO STATUSCODELAR DÜZGÜN DÖNMÜYOR ONLAR DÜZELTİLECEK VE GİRİŞ SERVİSİ DÜZELTİLECEK
 
@@ -27,7 +35,7 @@ passport.use("local", new LocalStrategy({ // or whatever you want to use
             return done(err);
 
         // check to see if theres already a user with that email
-        if (user) {
+        if (!user) {
             return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
         } else {
             const body = req.body;
@@ -46,6 +54,7 @@ passport.use("local", new LocalStrategy({ // or whatever you want to use
                 newUser.local.email    = email;
                 newUser.local.password = newUser.generateHash(password);
                 newUser.save().then((val) => {
+                    console.log("NEWUSER DÖNDÜ")
                     return done(null, newUser);
                     // res.status(httpStatusCode.StatusCodes.OK).send(val.id);
                 }).catch((err) => {
@@ -86,7 +95,7 @@ passport.use("local", new LocalStrategy({ // or whatever you want to use
 //     }
 
 // });
-//kayıt olurken bu olacak. giriş yaparken de logine post atıcaz 
+//kayıt olurken bu olacak. giriş yaparken de logine post atıcaz
 router.post('/signup', passport.authorize('local')
     , (req, res) => {
         console.log("PASSPORT AUTHORİZE BİTTİ AMA BURDA İŞ KALMADI?")
