@@ -47,6 +47,7 @@ router.post(blogPath, async (req, res) => {
                     message: err.message,
                 });
             } else {
+                console.log(req.session)
                 return res.status(httpStatusCode.StatusCodes.ACCEPTED).json(blog)
             }
         });
