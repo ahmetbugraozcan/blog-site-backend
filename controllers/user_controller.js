@@ -1,12 +1,10 @@
 var express = require('express');
 const User = require('../models/user');
 var router = express.Router();
-const passport = require('passport')
 const baseError = require('../utils/base_error');
 const httpStatusCode = require('http-status-codes');
 const loginConstats = require('../constants/login_constants');
 const connectEnsureLogin = require('connect-ensure-login');
-var LocalStrategy = require('passport-local').Strategy;
 var Joi = require('joi');
 var bcrypt = require('bcrypt');
 

@@ -5,6 +5,7 @@ const httpStatusCode = require('http-status-codes');
 var Joi = require('joi');
 
 const blogPath = "/blog";
+//tüm blogları getirir
 router.get(blogPath, (req, res) => {
     Blog.find((err, blogs) => {
         if (err) {
@@ -32,6 +33,7 @@ router.post(blogPath, async (req, res) => {
     const schema = joiBlogSchema();
     const validation = schema.validate(data);
     if (validation.error) {
+        console.log(validation.error);
         return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
             status: 'error',
             message: 'Invalid request data',

@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const app = express();
 const flash = require('connect-flash');
-const passport = require('passport');
 const userController = require('./controllers/user_controller');
 const blogController = require('./controllers/blog_controller');
 const commentController = require('./controllers/comment_controller');

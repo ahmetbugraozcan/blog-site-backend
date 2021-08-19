@@ -16,9 +16,10 @@ router.get('/blog/:blogID/comment/:commentId', async (req, res) => {
     })
 })
 //hepsi geliyor blog idsini belirtmemize rağmen diğer blogların commenti de gekiyor
+//O blogun tüm  commentlerini getiren metod
 router.get('/blog/:blogID/comment', async (req, res) => {
-    var commentId = req.params.commentId;
-    Comment.find((err, comment) => {
+    var blogID = req.params.blogID;
+    Comment.find({ "blog": blogID }, (err, comment) => {
         if (err) {
             return res.send(err);
         } else {
@@ -37,6 +38,8 @@ router.get('/blog/:blogID/comment', async (req, res) => {
 //         }
 //     })
 // })
+
+// idsi belirtilmiş bloga comment atan metod
 
 router.post('/blog/:id/comment', async (req, res) => {
     // find out which post you are commenting
