@@ -21,6 +21,7 @@
     "express-session": "^1.17.2",
     "http-status-codes": "^2.1.4",
     "joi": "^17.4.2",
+    "joi-objectid": "^3.0.1",
     "mongoose": "^5.13.5",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",

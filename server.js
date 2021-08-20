@@ -8,6 +8,7 @@ const flash = require('connect-flash');
 const userController = require('./controllers/user_controller');
 const blogController = require('./controllers/blog_controller');
 const commentController = require('./controllers/comment_controller');
+const likeController = require('./controllers/like_controller');
 const expressSession = require('express-session')({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -41,6 +42,7 @@ app.listen(9000, () => {
 app.use(userController.router);
 app.use(blogController.router);
 app.use(commentController.router);
+app.use(likeController.router);
 // app.get("/", (req,res)=>{
 //     res.send({name: "ahmet"});
 //     console.log(process.env.DATABASE_URL)

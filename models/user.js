@@ -24,6 +24,16 @@ var userSchema = new mongoose.Schema({
         index:true,
         unique: true,
     },
+    
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 });
 
 

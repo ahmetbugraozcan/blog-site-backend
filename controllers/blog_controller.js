@@ -2,7 +2,8 @@ var express = require('express');
 const Blog = require('../models/blog');
 var router = express.Router();
 const httpStatusCode = require('http-status-codes');
-var Joi = require('joi');
+const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
 
 const blogPath = "/blog";
 //tüm blogları getirir
@@ -44,6 +45,7 @@ router.post(blogPath, async (req, res) => {
         const blog = new Blog(data);
         blog.save((err, data) => {
             if (err) {
+                console.log("ERROR : " ,err);
                 return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
                     status: 'error',
                     message: err.message,
@@ -54,28 +56,6 @@ router.post(blogPath, async (req, res) => {
             }
         });
     }
-
-    // Joi.validate(data, schema, (err, _) => {
-    //     if (err) {
-    //         return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
-    //             status: 'error',
-    //             message: 'Invalid request data',
-    //             data: data
-    //         });
-    //     } else {
-    //         const blog = new Blog(data);
-    //         blog.save((err, data) => {
-    //             if (err) {
-    //                 return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
-    //                     status: 'error',
-    //                     message: err.message,
-    //                 });
-    //             } else {
-    //                 return res.status(httpStatusCode.StatusCodes.ACCEPTED).json(blog)
-    //             }
-    //         });
-    //     }
-    // });
 
 })
 
@@ -91,6 +71,7 @@ const updateBlog = async (item) => {
         return true;
     }
 }
+//blog sahibi idsi eklensin 
 
 function joiBlogSchema() {
     const schema = Joi.object({
@@ -105,9 +86,11 @@ function joiBlogSchema() {
             .max(200)
             .required(),
         createdDate: Joi.date(),
-        numberOfDate: Joi.number(),
-        numberOfLikes: Joi.number(),
+        numberOfView: Joi.number(),
+        likes: Joi.array(),
         comments: Joi.array(),
+        authorName: Joi.string().required(),
+        authorID: Joi.string().required(),
     });
     return schema;
 }

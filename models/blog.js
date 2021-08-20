@@ -28,15 +28,30 @@ var blogSchema = new mongoose.Schema({
         default: 0,
         index: true
     },
-    numberOfLikes: {
-        type: Number,
-        default: 0,
-        index: true
+    // numberOfLikes: {
+    //     type: Number,
+    //     default: 0,
+    //     index: true
+    // },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Like'
+    }],
+    
+    authorID: {
+        type: String,
+        required:true,
     },
+    authorName: {
+        type: String,
+        required:true,
+    },
+
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
-    }]
+    }],
+
 
 });
 

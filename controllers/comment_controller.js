@@ -3,6 +3,8 @@ var router = express.Router();
 const Blog = require('../models/blog');
 const httpStatusCode = require('http-status-codes')
 const Comment = require('../models/comment');
+const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
 
 
 router.get('/blog/:blogID/comment/:commentId', async (req, res) => {
@@ -42,30 +44,55 @@ router.get('/blog/:blogID/comment', async (req, res) => {
 // idsi belirtilmiş bloga comment atan metod
 
 router.post('/blog/:id/comment', async (req, res) => {
-    // find out which post you are commenting
-    const id = req.params.id;
-    // get the comment text and record post id
+    const body = req.body;
+    const schema = joiCommentSchema();
+    const validation = schema.validate(body);
 
-    const comment = new Comment({
-        text: req.body.text,
-        blog: id
-    })
-    // save comment
-    await comment.save();
+    if (validation.error) {
+        console.log(validation.error)
+        return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
+            status: 'error',
+            message: 'Invalid request data',
+            data: body
+        });
+    } else {
+        const id = req.params.id;
+        // get the comment text and record post id
 
-    // get this particular post
-    const blogRelated = await Blog.findById(id);
-    // push the comment into the post.comments array
-    blogRelated.comments.push(comment);
+        const comment = new Comment({
+            text: req.body.text,
+            commenterID: req.body.userID,
+            blog: id
+        })
+        // save comment
+        await comment.save();
 
-    console.log(comment)
-    // save and redirect...
-    await blogRelated.save(function (err) {
-        if (err) { console.log(err) }
-        res.status(httpStatusCode.StatusCodes.OK).json(comment)
-    })
+        // get this particular post
+        const blogRelated = await Blog.findById(id);
+        // push the comment into the post.comments array
+        blogRelated.comments.push(comment);
 
+        console.log(comment)
+        // save and redirect...
+        await blogRelated.save(function (err) {
+            if (err) { console.log(err) }
+            res.status(httpStatusCode.StatusCodes.OK).json(comment)
+        })
+
+    }
 })
+
+function joiCommentSchema() {
+    const schema = Joi.object({
+        id: Joi.any(),
+        date: Joi.date(),
+        comment: Joi.string().min(3).max(40)
+            .required(),
+        commenterID: Joi.any().required(),
+        blog: Joi.any(),
+    });
+    return schema;
+}
 
 module.exports = {
     router

@@ -7,6 +7,25 @@ const loginConstats = require('../constants/login_constants');
 const connectEnsureLogin = require('connect-ensure-login');
 var Joi = require('joi');
 var bcrypt = require('bcrypt');
+var mongo = require('mongodb');
+
+
+
+router.get('/user/:id', (req, res) => {
+    var userID = req.params.id;
+    var o_id = new mongo.ObjectID(userID);
+    User.findOne(o_id, (err,user) => {
+        if(user){
+            res.status(httpStatusCode.StatusCodes.OK).send(user);
+        }else{
+            res.status(httpStatusCode.StatusCodes.NOT_FOUND).json({
+                status: 'error',
+                message: 'User Not Found!',
+                statusCode:httpStatusCode.StatusCodes.NOT_FOUND,
+            });;
+        }
+    })
+})
 
 
 router.post('/signup', async function (req, res) {
@@ -26,9 +45,9 @@ router.post('/signup', async function (req, res) {
     }
     else {
         const newUser = new User(body);
-        const hashedPassword =  await bcrypt.hash(req.body.password, 10)
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
         newUser.password = hashedPassword;
-        console.log("User : " , newUser);
+        console.log("User : ", newUser);
         newUser.save().then((val) => {
             res.status(httpStatusCode.StatusCodes.OK).send(val.id);
         }).catch((err) => {
@@ -41,19 +60,19 @@ router.post('/signup', async function (req, res) {
 //kayıt olurken bu olacak. giriş yaparken de logine post atıcaz
 
 router.post('/login',
-      (req, res) => {
+    (req, res) => {
         const query = {}
         query.email = req.body.email;
         User.findOne(query, async (err, user) => {
             if (!user) {
                 return res.status(httpStatusCode.StatusCodes.NOT_FOUND).send("Böyle bir email bulunamadı");
             } else {
-                if(await bcrypt.compare(req.body.password, user.password)){
+                if (await bcrypt.compare(req.body.password, user.password)) {
                     console.log("PAROLALAR EŞLEŞTİ")
-                    return  res.status(httpStatusCode.StatusCodes.OK).send(user);
-                }else{
+                    return res.status(httpStatusCode.StatusCodes.OK).send(user);
+                } else {
                     return res.status(httpStatusCode.StatusCodes.FORBIDDEN).send("Şifre Yanlış");
-                } 
+                }
             }
         })
     }

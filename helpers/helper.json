@@ -2,14 +2,18 @@
     
 {
     "title": "BLOG json ",
-    "image": "https://i.stack.imgur.com/y9DpT.jpg",
+    "image": "https://blog.holosophic.org/wp-content/uploads/2018/05/Countries-page-image-placeholder-800x500.jpg",
     "content": "Vivamus posuere id lacus sit amet laoreet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse vulputate turpis justo, a efficitur neque tincidunt id. Maecenas at est eget libero feugiat tempus eu quis sem. Mauris ac mi vitae mi imperdiet tincidunt. Sed eget lacus et quam congue dapibus. Morbi pretium mattis enim, a sagittis neque vulputate quis. Nulla nunc ipsum, tincidunt id risus rutrum, semper finibus augue. Etiam pretium, leo vitae efficitur viverra, nisi nibh viverra metus, at sodales nisi mauris at dui."
 },
 
 
 {
-    "text": "Comment json "
+    "comment": "Comment json "
+},
+{
+    "likerID": "611c1e8a5b1dba1d6cba873b"
 }
+
 ,
 {
     "email":"ahmetba",
