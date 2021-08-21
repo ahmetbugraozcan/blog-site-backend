@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+//fotoğraf da eklenecek
+
 var userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -23,6 +25,11 @@ var userSchema = new mongoose.Schema({
         require:true,
         index:true,
         unique: true,
+    },
+    profilePhotoUrl: {
+        type: String,
+        index: true,
+        default: "https://w7.pngwing.com/pngs/831/88/png-transparent-user-profile-computer-icons-user-interface-mystique-miscellaneous-user-interface-design-smile.png",
     },
     
     followers: [{

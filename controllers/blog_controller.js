@@ -6,6 +6,8 @@ const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 
 const blogPath = "/blog";
+
+// User.findOne({ $or: [{ email: email }, { userName: req.body.userName }] }
 //tüm blogları getirir
 router.get(blogPath, (req, res) => {
     Blog.find((err, blogs) => {
@@ -14,7 +16,7 @@ router.get(blogPath, (req, res) => {
         } else {
             return res.json(blogs);
         }
-    })
+    }).sort( { createdDate:-1 } )
 });
 
 router.get(blogPath + '/:id', (req, res) => {
@@ -45,7 +47,7 @@ router.post(blogPath, async (req, res) => {
         const blog = new Blog(data);
         blog.save((err, data) => {
             if (err) {
-                console.log("ERROR : " ,err);
+                console.log("ERROR : " , ERR)
                 return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
                     status: 'error',
                     message: err.message,

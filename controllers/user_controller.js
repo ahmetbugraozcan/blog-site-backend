@@ -10,7 +10,7 @@ var bcrypt = require('bcrypt');
 var mongo = require('mongodb');
 
 
-
+//Belirli iddeki tek kullanıcıyı getiren sorgu
 router.get('/user/:id', (req, res) => {
     var userID = req.params.id;
     var o_id = new mongo.ObjectID(userID);
