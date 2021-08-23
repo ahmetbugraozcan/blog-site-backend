@@ -82,7 +82,8 @@ function joiBlogSchema() {
             .min(3)
             .max(40)
             .required(),
-        content: Joi.string().min(40).required(),
+        content: Joi.object(),
+        previewSubtitle: Joi.string(),
         image: Joi.string()
             .min(3)
             .max(200)
@@ -93,7 +94,7 @@ function joiBlogSchema() {
         comments: Joi.array(),
         authorName: Joi.string().required(),
         authorID: Joi.string().required(),
-    });
+    } , { minimize: false });
     return schema;
 }
 

@@ -7,8 +7,13 @@ var blogSchema = new mongoose.Schema({
         require: true,
         index: true
     },
-    content: {
+    previewSubtitle: {
         type: String,
+        require: true,
+        index: true
+    },
+    content: {
+        type: Object,
         require: true,
         index: true
 
@@ -53,6 +58,6 @@ var blogSchema = new mongoose.Schema({
     }],
 
 
-});
+}, {minimize: false});
 
 module.exports = mongoose.model('Blog', blogSchema);
