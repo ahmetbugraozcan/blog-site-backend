@@ -39,7 +39,7 @@ var blogSchema = new mongoose.Schema({
     //     index: true
     // },
     likes: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Object,
         ref: 'Like'
     }],
     

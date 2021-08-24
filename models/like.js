@@ -2,16 +2,14 @@ const mongoose = require('mongoose');
 
 //blogu atan kişinin idsi de olacak kullanıcı adı da olabilir
 
-const commentSchema = new mongoose.Schema({
-    date: {
-        type: Date,
-        default: Date.now
+const likeSchema = new mongoose.Schema({
+    blog: {
+        type: String,
     },
     // each comment can only relates to one blog, so it's not in array
     likerID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
     }
 })
 
-module.exports = mongoose.model('Like', commentSchema);
+module.exports = mongoose.model('Like', likeSchema);
