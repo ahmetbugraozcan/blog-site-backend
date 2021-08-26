@@ -8,10 +8,12 @@ const commentSchema = new mongoose.Schema({
         trim: true,
         required: true
     },
+
     date: {
         type: Date,
         default: Date.now
     },
+
     // each comment can only relates to one blog, so it's not in array
     blog: {
         type: mongoose.Schema.Types.ObjectId,
@@ -20,6 +22,10 @@ const commentSchema = new mongoose.Schema({
     commenterID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+    },
+    commenterName: {
+        type: String,
+        required: true
     }
 })
 

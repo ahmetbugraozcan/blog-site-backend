@@ -6,7 +6,7 @@ const Comment = require('../models/comment');
 const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 
-
+//belirli iddeki comment
 router.get('/blog/:blogID/comment/:commentId', async (req, res) => {
     var commentId = req.params.commentId;
     Comment.findById(commentId, (err, comment) => {
@@ -27,7 +27,7 @@ router.get('/blog/:blogID/comment', async (req, res) => {
         } else {
             return res.json(comment);
         }
-    })
+    }).sort( { date: -1 } )
 })
 
 // router.get('/blog/:id/comment', async (req, res) => {
@@ -60,8 +60,9 @@ router.post('/blog/:id/comment', async (req, res) => {
         // get the comment text and record post id
 
         const comment = new Comment({
-            text: req.body.text,
-            commenterID: req.body.userID,
+            comment: req.body.comment,
+            commenterName: req.body.commenterName,
+            commenterID: req.body.commenterID,
             blog: id
         })
         // save comment
@@ -75,7 +76,7 @@ router.post('/blog/:id/comment', async (req, res) => {
         console.log(comment)
         // save and redirect...
         await blogRelated.save(function (err) {
-            if (err) { console.log(err) }
+            if (err) { console.log(err);   res.status(httpStatusCode.StatusCodes.BAD_REQUEST)}
             res.status(httpStatusCode.StatusCodes.OK).json(comment)
         })
 
@@ -89,6 +90,7 @@ function joiCommentSchema() {
         comment: Joi.string().min(3).max(40)
             .required(),
         commenterID: Joi.any().required(),
+        commenterName: Joi.string().required(),
         blog: Joi.any(),
     });
     return schema;

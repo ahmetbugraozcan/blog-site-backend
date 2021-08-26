@@ -29,7 +29,7 @@ var userSchema = new mongoose.Schema({
     profilePhotoUrl: {
         type: String,
         index: true,
-        default: "https://w7.pngwing.com/pngs/831/88/png-transparent-user-profile-computer-icons-user-interface-mystique-miscellaneous-user-interface-design-smile.png",
+        default: "https://res.cloudinary.com/practicaldev/image/fetch/s--Z2Tv4-O4--/c_fill,f_auto,fl_progressive,h_90,q_auto,w_90/https://dev-to-uploads.s3.amazonaws.com/uploads/user/profile_image/498048/3d29cbb2-80bf-4771-8415-38fa01b01390.jpg",
     },
     
     followers: [{

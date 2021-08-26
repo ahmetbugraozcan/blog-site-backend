@@ -53,7 +53,7 @@ var blogSchema = new mongoose.Schema({
     },
 
     comments: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Object,
         ref: 'Comment'
     }],
 
