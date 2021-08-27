@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon server.js"
+    "devStart": "nodemon server.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install      --prefix frontend && npm run build --prefix frontend"
   },
   "author": "",
   "license": "ISC",
@@ -25,10 +26,12 @@
     "mongoose": "^5.13.5",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.1.0"
-  },
-  "devDependencies": {
+    "passport-local-mongoose": "^6.1.0",
     "dotenv": "^10.0.0",
     "nodemon": "^2.0.12"
-  }
+  },
+  "devDependencies": {
+
+  },
+  "proxy": "http://localhost:9000"
 }
