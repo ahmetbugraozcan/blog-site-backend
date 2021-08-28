@@ -43,15 +43,11 @@ var blogSchema = new mongoose.Schema({
         ref: 'Like'
     }],
     
-    authorID: {
-        type: String,
+    author: {
+        type: Object,
         required:true,
+        ref:'User',
     },
-    authorName: {
-        type: String,
-        required:true,
-    },
-
     comments: [{
         type: Object,
         ref: 'Comment'

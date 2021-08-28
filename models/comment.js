@@ -19,13 +19,9 @@ const commentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Blog'
     },
-    commenterID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    commenterName: {
-        type: String,
-        required: true
+    commenter: {
+        type: Object,
+        ref: 'User'
     }
 })
 

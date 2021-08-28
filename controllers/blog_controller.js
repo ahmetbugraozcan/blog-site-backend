@@ -92,8 +92,7 @@ function joiBlogSchema() {
         numberOfView: Joi.number(),
         likes: Joi.array(),
         comments: Joi.array(),
-        authorName: Joi.string().required(),
-        authorID: Joi.string().required(),
+        author: Joi.object().required(),
     } , { minimize: false });
     return schema;
 }

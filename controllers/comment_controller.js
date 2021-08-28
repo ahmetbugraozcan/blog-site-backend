@@ -61,8 +61,7 @@ router.post('/blog/:id/comment', async (req, res) => {
 
         const comment = new Comment({
             comment: req.body.comment,
-            commenterName: req.body.commenterName,
-            commenterID: req.body.commenterID,
+            commenter: req.body.commenter,
             blog: id
         })
         // save comment
@@ -89,8 +88,7 @@ function joiCommentSchema() {
         date: Joi.date(),
         comment: Joi.string().min(3).max(40)
             .required(),
-        commenterID: Joi.any().required(),
-        commenterName: Joi.string().required(),
+        commenter: Joi.object().required(),
         blog: Joi.any(),
     });
     return schema;
