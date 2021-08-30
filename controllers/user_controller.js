@@ -11,10 +11,10 @@ var mongo = require('mongodb');
 
 
 //Belirli iddeki tek kullanıcıyı getiren sorgu
-router.get('/user/:id', (req, res) => {
-    var userID = req.params.id;
-    var o_id = new mongo.ObjectID(userID);
-    User.findOne(o_id, (err,user) => {
+router.get('/user/:username', (req, res) => {
+    var username = req.params.username;
+    // var o_id = new mongo.ObjectID(userID);
+    User.findOne({'username' : username}, (err,user) => {
         if(user){
             res.status(httpStatusCode.StatusCodes.OK).send(user);
         }else{

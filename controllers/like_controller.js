@@ -15,7 +15,7 @@ router.post('/blog/:id/like', async (req, res) => {
     const validation = schema.validate(body);
 
     if (validation.error) {
-        console.log(validation.error, " aasdasda")
+        console.log(validation.error)
         return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
             status: 'error',
             message: 'Invalid request data',

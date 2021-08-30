@@ -42,11 +42,14 @@ var blogSchema = new mongoose.Schema({
         type: Object,
         ref: 'Like'
     }],
-    
+    bookmarkedUserIDs: [{
+        type: String,
+    }],
+
     author: {
         type: Object,
-        required:true,
-        ref:'User',
+        required: true,
+        ref: 'User',
     },
     comments: [{
         type: Object,
@@ -54,6 +57,6 @@ var blogSchema = new mongoose.Schema({
     }],
 
 
-}, {minimize: false});
+}, { minimize: false });
 
 module.exports = mongoose.model('Blog', blogSchema);

@@ -33,12 +33,17 @@ var userSchema = new mongoose.Schema({
     },
     
     followers: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Object,
         ref: 'User'
     }],
 
+    bookmarks: [{
+        type: Object,
+        ref: 'Bookmark'
+    }],
+
     following: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Object,
         ref: 'User'
     }]
 });
