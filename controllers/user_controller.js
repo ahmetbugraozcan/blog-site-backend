@@ -59,6 +59,7 @@ router.post('/signup', async function (req, res) {
 });
 //kayıt olurken bu olacak. giriş yaparken de logine post atıcaz
 
+
 router.post('/login',
     (req, res) => {
         const query = {}

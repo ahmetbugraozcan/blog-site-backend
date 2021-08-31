@@ -9,6 +9,19 @@ const blogPath = "/blog";
 
 // User.findOne({ $or: [{ email: email }, { userName: req.body.userName }] }
 //tüm blogları getirir
+router.get(blogPath + '/:userid/likedPosts', (req, res) => {
+    var userid = req.params.userid;
+    
+    Blog.find({"likes.likerID":  userid}).then((blogs, err) => {
+        if(blogs) {
+            console.log("BLOGLAR : " , blogs);
+            res.json(blogs);
+        } else {
+            res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
+        }
+    })
+}) 
+
 router.get(blogPath, (req, res) => {
     Blog.find((err, blogs) => {
         if (err) {
