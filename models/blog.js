@@ -44,6 +44,7 @@ var blogSchema = new mongoose.Schema({
     }],
     bookmarkedUserIDs: [{
         type: String,
+        unique:true,
     }],
 
     author: {

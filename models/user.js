@@ -46,7 +46,7 @@ var userSchema = new mongoose.Schema({
         type: Object,
         ref: 'User'
     }]
-});
+},{ minimize: false });
 
 
 module.exports = mongoose.model('User', userSchema);

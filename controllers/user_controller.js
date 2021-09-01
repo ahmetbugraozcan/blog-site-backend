@@ -8,20 +8,21 @@ const connectEnsureLogin = require('connect-ensure-login');
 var Joi = require('joi');
 var bcrypt = require('bcrypt');
 var mongo = require('mongodb');
+const Follower = require('../models/follower');
 
 
 //Belirli iddeki tek kullanıcıyı getiren sorgu
 router.get('/user/:username', (req, res) => {
     var username = req.params.username;
     // var o_id = new mongo.ObjectID(userID);
-    User.findOne({'username' : username}, (err,user) => {
-        if(user){
+    User.findOne({ 'username': username }, (err, user) => {
+        if (user) {
             res.status(httpStatusCode.StatusCodes.OK).send(user);
-        }else{
+        } else {
             res.status(httpStatusCode.StatusCodes.NOT_FOUND).json({
                 status: 'error',
                 message: 'User Not Found!',
-                statusCode:httpStatusCode.StatusCodes.NOT_FOUND,
+                statusCode: httpStatusCode.StatusCodes.NOT_FOUND,
             });;
         }
     })
@@ -62,7 +63,7 @@ router.post('/signup', async function (req, res) {
 
 router.post('/login',
     (req, res) => {
-        const query = {}
+        const query = { }
         query.email = req.body.email;
         User.findOne(query, async (err, user) => {
             if (!user) {
@@ -79,6 +80,76 @@ router.post('/login',
     }
 );
 
+router.get("/user/:username/followers", (req, res) => {
+    var usernameParam = req.params.username;
+    User.findOne({ "username": usernameParam }).then((user, err) => {
+        if(user) {
+            console.log("users : " , user.followers);
+            res.json(user.followers);
+        } else {
+            res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
+        }
+    })
+});
+
+router.post("/user/:username/follow",
+    (req, res) => {
+        var isFollowedEarly = false;
+        const body = req.body;
+        const schema = joiFollowerSchema();
+        const usernameParam = req.params.username
+        var data = {
+            follower: req.body.follower,
+            followedUsername: usernameParam
+        };
+        const validation = schema.validate(data);
+
+        if (validation.error) {
+            console.log(validation.error)
+            return res.status(httpStatusCode.StatusCodes.NOT_ACCEPTABLE).json({
+                status: 'error',
+                message: 'Invalid request data',
+                data: body
+            });
+        }
+        else {
+            const follower = new Follower(data);
+            User.findOne({ 'username': usernameParam }, (err, userRelated) => {
+                console.log("USER: ", usernameParam)
+                userRelated.followers.forEach(user => {
+                    if (user.username == follower.follower.username) {
+                        isFollowedEarly = true;
+                    }
+                });
+
+                if (!isFollowedEarly) {
+                    userRelated.followers.push(follower)
+                }
+                else {
+                    userRelated.followers.forEach(user => {
+                        if (user.username == follower.follower.username) {
+                            userRelated.followers.remove(follower);
+                        }
+                    });
+                    // blogRelated.likes.remove
+                };
+
+                userRelated.save(function (err) {
+                    if (err) { console.log(err) }
+                    if (!isFollowedEarly) {
+                        res.status(httpStatusCode.StatusCodes.OK).json(follower)
+                    }
+                    else {
+                        res.status(httpStatusCode.StatusCodes.ACCEPTED).json(follower)
+                    }
+                });
+            });
+
+        }
+    }
+);
+
+
 
 function joiUserSchema() {
     const schema = Joi.object({
@@ -92,6 +163,16 @@ function joiUserSchema() {
             .required(),
         email: Joi.string()
             .required(),
+    });
+    return schema;
+}
+
+
+function joiFollowerSchema() {
+    const schema = Joi.object({
+        id: Joi.any(),
+        followedUsername: Joi.string().required(),
+        follower: Joi.object(),
     });
     return schema;
 }
