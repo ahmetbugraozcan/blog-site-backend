@@ -80,12 +80,13 @@ router.post('/login',
     }
 );
 
+//bir kişinin tüm takipçilerini getirir
 router.get("/user/:username/followers", (req, res) => {
     var usernameParam = req.params.username;
     User.findOne({ "username": usernameParam }).then((user, err) => {
         if(user) {
             console.log("users : " , user.followers);
-            res.json(user.followers);
+            res.json(user.followers).status(httpStatusCode.StatusCodes.OK);
         } else {
             res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
         }
@@ -98,11 +99,10 @@ router.post("/user/:username/follow",
         const body = req.body;
         const schema = joiFollowerSchema();
         const usernameParam = req.params.username
-        var data = {
+        var reqFollower = {
             follower: req.body.follower,
-            followedUsername: usernameParam
         };
-        const validation = schema.validate(data);
+        const validation = schema.validate(reqFollower);
 
         if (validation.error) {
             console.log(validation.error)
@@ -113,11 +113,10 @@ router.post("/user/:username/follow",
             });
         }
         else {
-            const follower = new Follower(data);
+            const follower = new Follower(reqFollower);
             User.findOne({ 'username': usernameParam }, (err, userRelated) => {
-                console.log("USER: ", usernameParam)
                 userRelated.followers.forEach(user => {
-                    if (user.username == follower.follower.username) {
+                    if (user.follower.username == follower.follower.username) {
                         isFollowedEarly = true;
                     }
                 });
@@ -127,8 +126,8 @@ router.post("/user/:username/follow",
                 }
                 else {
                     userRelated.followers.forEach(user => {
-                        if (user.username == follower.follower.username) {
-                            userRelated.followers.remove(follower);
+                        if (user.follower.username == follower.follower.username) {
+                            userRelated.followers.remove(user);
                         }
                     });
                     // blogRelated.likes.remove
@@ -137,10 +136,12 @@ router.post("/user/:username/follow",
                 userRelated.save(function (err) {
                     if (err) { console.log(err) }
                     if (!isFollowedEarly) {
-                        res.status(httpStatusCode.StatusCodes.OK).json(follower)
+                        res.status(httpStatusCode.StatusCodes.OK).send(httpStatusCode.StatusCodes.OK);
+                        console.log("OK")
                     }
                     else {
-                        res.status(httpStatusCode.StatusCodes.ACCEPTED).json(follower)
+                        res.status(httpStatusCode.StatusCodes.ACCEPTED).send(httpStatusCode.StatusCodes.ACCEPTED);
+                        console.log("ACCEPTED")
                     }
                 });
             });
@@ -148,6 +149,21 @@ router.post("/user/:username/follow",
         }
     }
 );
+
+//bir kişinin takip ettiği tüm kullanıcıları getirir
+
+router.get('/user/:username/followedUsers', (req, res) => {
+    var username = req.params.username;
+    
+    User.find({"followers.follower.username":  username}).then((users, err) => {
+        if(users) {
+            console.log("USERLAR : " , users);
+            res.json(users).status(httpStatusCode.StatusCodes.OK);
+        } else {
+            res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
+        }
+    })
+}) 
 
 
 
@@ -171,7 +187,6 @@ function joiUserSchema() {
 function joiFollowerSchema() {
     const schema = Joi.object({
         id: Joi.any(),
-        followedUsername: Joi.string().required(),
         follower: Joi.object(),
     });
     return schema;

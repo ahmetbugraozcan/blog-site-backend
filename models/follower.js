@@ -5,9 +5,6 @@ const followerSchema = new mongoose.Schema({
     follower: {
         type: Object,
         ref: 'User'
-    },
-    followedUsername: {
-        type: String,
     }
 })
 
