@@ -20,6 +20,7 @@ router.get(blogPath + '/:userid/likedPosts', (req, res) => {
         }
     })
 }) 
+
 router.get(blogPath + '/:userid/bookmarkedPosts', (req, res) => {
     var userid = req.params.userid;
     
@@ -54,7 +55,7 @@ router.get(blogPath + '/:id', (req, res) => {
     })
 });
 
-
+//sadece USERID gelecek ve user bilgilerini biz çekeceğiz databaseden !! ÖNEMLİ
 router.post(blogPath, async (req, res) => {
     const data = req.body;
     const schema = joiBlogSchema();

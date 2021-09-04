@@ -46,6 +46,7 @@ router.post('/blog/:id/like', async (req, res) => {
         } else {
             blogRelated.likes.forEach(likeItem => {
                 if (likeItem.likerID == like.likerID) {
+                    // blogRelated.update({$pull: {'likes.likerID': like.likerID}})
                     blogRelated.likes.remove(likeItem);
                 }
             });

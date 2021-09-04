@@ -86,7 +86,7 @@ function joiCommentSchema() {
     const schema = Joi.object({
         id: Joi.any(),
         date: Joi.date(),
-        comment: Joi.string().min(3).max(40)
+        comment: Joi.string().min(3)
             .required(),
         commenter: Joi.object().required(),
         blog: Joi.any(),

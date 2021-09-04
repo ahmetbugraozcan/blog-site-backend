@@ -33,11 +33,6 @@ var blogSchema = new mongoose.Schema({
         default: 0,
         index: true
     },
-    // numberOfLikes: {
-    //     type: Number,
-    //     default: 0,
-    //     index: true
-    // },
     likes: [{
         type: Object,
         ref: 'Like'
@@ -49,9 +44,10 @@ var blogSchema = new mongoose.Schema({
 
     author: {
         type: Object,
+        ref: "User",
         required: true,
-        ref: 'User',
     },
+
     comments: [{
         type: Object,
         ref: 'Comment'
