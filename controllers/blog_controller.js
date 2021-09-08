@@ -13,7 +13,6 @@ router.get(blogPath + '/:userid/likedPosts', (req, res) => {
     
     Blog.find({"likes.likerID":  userid}).then((blogs, err) => {
         if(blogs) {
-            console.log("BLOGLAR : " , blogs);
             res.json(blogs);
         } else {
             res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
@@ -26,7 +25,6 @@ router.get(blogPath + '/:userid/bookmarkedPosts', (req, res) => {
     
     Blog.find({"bookmarkedUserIDs":  userid}).then((blogs, err) => {
         if(blogs) {
-            console.log("BLOGLAR : " , blogs);
             res.json(blogs);
         } else {
             res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);

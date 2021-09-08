@@ -7,6 +7,7 @@ var blogSchema = new mongoose.Schema({
         require: true,
         index: true
     },
+
     previewSubtitle: {
         type: String,
         require: true,
@@ -16,8 +17,8 @@ var blogSchema = new mongoose.Schema({
         type: Object,
         require: true,
         index: true
-
     },
+
     image: {
         type: String,
         required: true,

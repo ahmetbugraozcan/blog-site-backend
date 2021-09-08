@@ -9,7 +9,8 @@ var Joi = require('joi');
 var bcrypt = require('bcrypt');
 var mongo = require('mongodb');
 const Follower = require('../models/follower');
-
+const Blog = require('../models/blog');
+const Comment = require('../models/comment');
 
 //Belirli iddeki tek kullanıcıyı getiren sorgu
 router.get('/user/:username', (req, res) => {
@@ -63,7 +64,7 @@ router.post('/signup', async function (req, res) {
 
 router.post('/login',
     (req, res) => {
-        const query = { }
+        const query = {}
         query.email = req.body.email;
         User.findOne(query, async (err, user) => {
             if (!user) {
@@ -84,8 +85,8 @@ router.post('/login',
 router.get("/user/:username/followers", (req, res) => {
     var usernameParam = req.params.username;
     User.findOne({ "username": usernameParam }).then((user, err) => {
-        if(user) {
-            console.log("users : " , user.followers);
+        if (user) {
+            console.log("users : ", user.followers);
             res.json(user.followers).status(httpStatusCode.StatusCodes.OK);
         } else {
             res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
@@ -154,16 +155,105 @@ router.post("/user/:username/follow",
 
 router.get('/user/:username/followedUsers', (req, res) => {
     var username = req.params.username;
-    
-    User.find({"followers.follower.username":  username}).then((users, err) => {
-        if(users) {
-            console.log("USERLAR : " , users);
+
+    User.find({ "followers.follower.username": username }).then((users, err) => {
+        if (users) {
             res.json(users).status(httpStatusCode.StatusCodes.OK);
         } else {
             res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
         }
     })
-}) 
+})
+
+router.post('/user/:id/update/username', (req, res) => {
+    var mainRes = res;
+    User.findById(req.params.id, (err, user) => {
+        if (!user) {
+            return res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
+        }
+        else if (err) {
+            console.log(err);
+            res.sendStatus(httpStatusCode.StatusCodes.INTERNAL_SERVER_ERROR)
+        }
+        else {
+            if (req.body != {}) {
+                User.find({ username: req.body.username }, (err, users) => {
+                    if (users.length == 0) {
+                        User.updateOne({ username: req.body.username }, (err, res) => {
+                            if (err) {
+                                return mainRes.sendStatus(httpStatusCode.StatusCodes.NOT_ACCEPTABLE);
+                            }
+                            else {
+                                return mainRes.sendStatus(httpStatusCode.StatusCodes.OK);
+                            }
+                        });
+
+                        User.updateMany({ 'followers.follower._id': req.params.id }, { $set: { 'followers.$.follower.username': req.body.username } }).then((res) => {
+                        }).catch(err => console.log(err));;
+        
+                        Blog.updateMany({ 'author._id': req.params.id }, { $set: { 'author.username': req.body.username } }).then((res) => {
+                        }).catch(err => console.log(err));
+        
+                        Blog.updateMany({ 'comments.commenter._id': req.params.id }, { $set: { 'comments.$.commenter.username': req.body.username } }).then((res) => {
+                        }).catch(err => console.log(err));
+        
+                        Comment.updateMany({ 'commenter._id': req.params.id }, { $set: { 'commenter.username': req.body.username } }).then((res) => {
+                        }).catch(err => console.log(err));
+
+                    }
+                    else {
+                        return mainRes.sendStatus(httpStatusCode.StatusCodes.CONFLICT);
+                    }
+                })
+            }
+        }
+    })
+});
+
+//yapılan yorumlarda vs de değiştirmek gerekiyor hepsini...
+router.post('/user/:id/update/name', (req, res) => {
+    var mainRes = res;
+    User.findById(req.params.id, (err, user) => {
+        if (!user) {
+            return res.sendStatus(httpStatusCode.StatusCodes.NOT_FOUND);
+        }
+        else if (err) {
+            console.log(err);
+            res.sendStatus(httpStatusCode.StatusCodes.INTERNAL_SERVER_ERROR)
+        }
+        else {
+            if (req.body != {}) {
+                User.updateOne({ name: req.body.name }, (err, res) => {
+                    if (err) {
+                        return mainRes.sendStatus(httpStatusCode.StatusCodes.NOT_ACCEPTABLE);
+                    }
+                    else {
+                        return mainRes.sendStatus(httpStatusCode.StatusCodes.OK);
+                    }
+                });
+                // User.find({ 'followers.follower._id': req.params.id }, (req, res) => {
+                //     if (res) {
+                //         console.log(res);
+                //     }
+                // })
+                // var o_id = new mongo.ObjectID(req.params.id);
+
+                // User.find({ 'followers.follower._id': o_id }).updateMany({}, { $set: { "followers.follower.name": req.body.name } });
+                User.updateMany({ 'followers.follower._id': req.params.id }, { $set: { 'followers.$.follower.name': req.body.name } }).then((res) => {
+                }).catch(err => console.log(err));;
+
+                Blog.updateMany({ 'author._id': req.params.id }, { $set: { 'author.name': req.body.name } }).then((res) => {
+                }).catch(err => console.log(err));
+
+                Blog.updateMany({ 'comments.commenter._id': req.params.id }, { $set: { 'comments.$.commenter.name': req.body.name } }).then((res) => {
+                }).catch(err => console.log(err));
+
+                Comment.updateMany({ 'commenter._id': req.params.id }, { $set: { 'commenter.name': req.body.name } }).then((res) => {
+                }).catch(err => console.log(err));
+            }
+        }
+    })
+})
 
 
 

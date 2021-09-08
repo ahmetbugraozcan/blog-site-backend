@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
 
+const mongoose = require('mongoose');
 //fotoğraf da eklenecek
 
 var userSchema = new mongoose.Schema({
@@ -7,6 +7,7 @@ var userSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    
     username: {
         type: String,
         require: true,
@@ -20,12 +21,14 @@ var userSchema = new mongoose.Schema({
         index:true,
         unique: true,
     },
+
     password: {
         type:String,
         require:true,
         index:true,
         unique: true,
     },
+
     profilePhotoUrl: {
         type: String,
         index: true,
@@ -46,7 +49,8 @@ var userSchema = new mongoose.Schema({
         type: Object,
         ref: 'User'
     }]
-},{ minimize: false });
+},
+{ minimize: false });
 
 
 module.exports = mongoose.model('User', userSchema);
